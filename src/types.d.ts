@@ -1,10 +1,12 @@
+import { Loader } from "./loader";
+
 export interface GameCtx {
   events: any,
   animation: any,
   brush: any,
   camera: any,
   physics: any,
-  loader: any
+  loader: Loader
 }
 
 export interface Scene {

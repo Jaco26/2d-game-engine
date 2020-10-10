@@ -7,8 +7,14 @@ import {
 } from './types'
 
 import { EventManager } from './events'
+import { Loader } from './loader'
 
 export class Game {
+  private animationHandle = null
+  private state = {
+    ready: false,
+    gameOn: false,
+  }
   private canvas: any
   private _ctx: CanvasRenderingContext2D
   private width: number
@@ -17,6 +23,8 @@ export class Game {
   private viewport: Viewport
   
   private events = new EventManager()
+
+  private loader = new Loader()
 
   constructor({ canvasId, width, height, scene, viewport }: GameConfig) {
     this.canvas = document.getElementById(canvasId)
@@ -28,25 +36,59 @@ export class Game {
 
     this.canvas.width = viewport.width
     this.canvas.height = viewport.height
+    
+    this.init()
+  }
+
+  private async init() {
+    await this.scene.preload(this.ctx)
+    await this.scene.create(this.ctx)
+
+    this.state.ready = true
   }
 
   get ctx(): GameCtx {
     return {
       events: 1,
       animation: 1,
-      brush: 1,
+      brush: {
+        drawImage: (img: HTMLImageElement, x: number, y: number) => {
+          this._ctx.beginPath()
+          this._ctx.drawImage(img, x, y)
+          this._ctx.closePath()
+        },
+        clearCanvas: () => {
+          this._ctx.clearRect(0, 0, this.viewport.width, this.viewport.height)
+        }
+      },
       camera: 1,
       physics: 1,
-      loader: 1
+      loader: this.loader
     }
   }
 
+  frame() {
+    this.scene.update(this.ctx)
+  }
+
   play() {
-    return this.canvas
+    this.state.gameOn = true
+    if (this.state.gameOn) {
+      if (!this.state.ready) {
+        setTimeout(() => {
+          this.play()
+        })
+      } else {
+        this.scene.update(this.ctx)
+        this.animationHandle = requestAnimationFrame(this.play.bind(this))
+      }
+    } else {
+      this.pause()
+    }
   }
 
   pause() {
-
+    cancelAnimationFrame(this.animationHandle)
   }
 
   reset() {
