@@ -1,12 +1,16 @@
 import { Loader } from "./loader";
+import { AnimationManager } from './animation';
+import { EventManager } from './events';
+import { Brush } from './brush';
 
 export interface GameCtx {
-  events: any,
-  animation: any,
-  brush: any,
+  events: EventManager,
+  animation: AnimationManager,
+  brush: Brush,
   camera: any,
   physics: any,
-  loader: Loader
+  loader: Loader,
+  viewport: Viewport,
 }
 
 export interface Scene {

@@ -13,8 +13,8 @@ const game = new Game({
     create(ctx) {
 
     },
-    update({ brush, loader }) {
-      brush.clearCanvas()
+    update({ brush, loader, viewport }) {
+      brush.clearRect(viewport.x, viewport.y, viewport.width, viewport.height)
       brush.drawImage(loader.get('wifi'), coords.x, coords.y)
       coords.x += 1
       coords.y -= 1
