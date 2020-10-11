@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server",
-    "build": "webpack",
+    "build": "webpack; cp index.html ./docs; cp favicon.ico ./docs; cp -R ./images ./docs/images;",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
