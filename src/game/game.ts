@@ -7,6 +7,12 @@ export default new Game({
   canvasId: 'game-canvas',
   width: 2700,
   height: 1800,
+  viewport: {
+    x: 0,
+    y: 0,
+    width: 900,
+    height: 600,
+  },
   scene: {
     async preload({ loader }) {
       await loader.load('images/wifi.jpg')
@@ -20,10 +26,4 @@ export default new Game({
       brush.drawImage(loader.get('wifi'), sprite.x, sprite.y)
     },
   },
-  viewport: {
-    x: 0,
-    y: 0,
-    width: 900,
-    height: 600,
-  }
 });
