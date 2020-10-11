@@ -1,6 +1,19 @@
-import { Game } from './game'
+import { Game, Sprite } from './lib/index'
 
-const coords = {x: 320, y: 300}
+const sprite = new Sprite(200, 200)
+
+sprite.ifInput('ArrowUp').then(self => {
+  self.y -= 4
+})
+sprite.ifInput('ArrowDown').then(self => {
+  self.y += 4
+})
+sprite.ifInput('ArrowRight').then(self => {
+  self.x += 4
+})
+sprite.ifInput('ArrowLeft').then(self => {
+  self.x -= 4
+})
 
 const game = new Game({
   canvasId: 'game-canvas',
@@ -13,11 +26,10 @@ const game = new Game({
     create(ctx) {
 
     },
-    update({ brush, loader, viewport }) {
+    update({ brush, loader, viewport, pressedKeys }) {
+      sprite.handleInput(pressedKeys)
       brush.clearRect(viewport.x, viewport.y, viewport.width, viewport.height)
-      brush.drawImage(loader.get('wifi'), coords.x, coords.y)
-      coords.x += 1
-      coords.y -= 1
+      brush.drawImage(loader.get('wifi'), sprite.x, sprite.y)
     },
   },
   viewport: {

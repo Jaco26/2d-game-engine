@@ -3,13 +3,14 @@ import {
   Scene,
   Viewport,
   GameConfig,
-  GameEventHandler
+  GameEventHandler,
 } from './types'
 
 import { EventManager } from './events'
-import { AnimationManager } from './animation';
+import { AnimationManager } from './animation'
 import { Loader } from './loader'
-import { Brush } from './brush';
+import { Brush } from './brush'
+import { KeyboardInput } from './input'
 
 export class Game {
 
@@ -29,6 +30,7 @@ export class Game {
   
   private events = new EventManager()
   private loader = new Loader()
+  private keyboard = new KeyboardInput()
 
 
 
@@ -54,9 +56,16 @@ export class Game {
     this.init()
   }
 
+  private _update() {
+    this.scene.update(this.ctx)
+    this.events.flushQueue(this.ctx)
+    return this.state.gameOn
+  }
+
   private async init() {
     await this.scene.preload(this.ctx)
     this.scene.create(this.ctx)
+    this.keyboard.listen()
     this.state.ready = true
   }
 
@@ -69,6 +78,7 @@ export class Game {
       physics: 1,
       loader: this.loader,
       viewport: this.viewport,
+      pressedKeys: this.keyboard.pressedKeys,
     }
   }
 

@@ -2,6 +2,10 @@ import { Loader } from "./loader";
 import { AnimationManager } from './animation';
 import { EventManager } from './events';
 import { Brush } from './brush';
+import { Sprite } from './sprite'
+
+
+export type Command = (s: Sprite) => void
 
 export interface GameCtx {
   events: EventManager,
@@ -11,6 +15,7 @@ export interface GameCtx {
   physics: any,
   loader: Loader,
   viewport: Viewport,
+  pressedKeys: string[],
 }
 
 export interface Scene {
