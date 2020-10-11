@@ -5,7 +5,8 @@ import { Brush } from './brush';
 import { Sprite } from './sprite'
 
 
-export type Command = (s: Sprite) => void
+export type Command = (sprite: Sprite) => void
+export type Predicate = (input: string[]) => boolean
 
 export interface GameCtx {
   events: EventManager,

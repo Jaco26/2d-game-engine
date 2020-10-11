@@ -1,17 +1,17 @@
-
+import { Command, Predicate } from './types'
 
 export class KeyboardInput {
 
   pressedKeys: string[] = []
 
   listen() {
-    window.addEventListener('keydown', this.pushKeys.bind(this))
-    window.addEventListener('keyup', this.spliceKeys.bind(this))
+    window.addEventListener('keydown', e => this.pushKeys(e))
+    window.addEventListener('keyup', e => this.spliceKeys(e))
   }
 
   stopListening() {
-    window.removeEventListener('keydown', this.pushKeys.bind(this))
-    window.removeEventListener('keyup', this.spliceKeys.bind(this))
+    window.removeEventListener('keydown', e => this.pushKeys(e))
+    window.removeEventListener('keyup', e => this.spliceKeys(e))
   }
 
   private pushKeys(e: KeyboardEvent) {
@@ -26,3 +26,30 @@ export class KeyboardInput {
     }
   }
 }
+
+
+
+interface Rule {
+  predicate: Predicate,
+  command: Command
+}
+
+
+export class InputParser {
+  private rules: Rule[] = []
+
+  addRule(predicate: Predicate, command: Command) {
+    this.rules.push({ predicate, command })
+  }
+
+  parseInput(input: string[]): Command[] {
+    return this.rules.reduce((acc, { predicate, command }) => {
+      if (predicate(input)) {
+        acc.push(command)
+      }
+      return acc
+    }, [])
+  }
+}
+
+
