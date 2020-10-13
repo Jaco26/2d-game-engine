@@ -40,4 +40,9 @@ export interface GameConfig {
   viewport: Viewport,
 }
 
+export interface SpriteState {
+  handleInput: (s: Sprite, ipt: string[]) => SpriteState,
+  update: (s: Sprite) => void
+}
+
 export type GameEventHandler = (ctx: GameCtx, payolad: any) => void 

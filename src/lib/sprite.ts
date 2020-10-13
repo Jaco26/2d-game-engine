@@ -1,8 +1,9 @@
-import { Command } from './types'
+import { SpriteState } from './types'
 
 export class Sprite {
   x: number
   y: number
+  states: SpriteState[] = []
 
   inputMap = {}
   dx = 0
@@ -15,19 +16,16 @@ export class Sprite {
     this.y = y
   }
 
-  ifInput(x: string) {
-    return {
-      then: (command: Command) => {
-        this.inputMap[x] = () => command(this)
-      }
-    }
+  registerState(state: SpriteState) {
+    this.states.push(state)
   }
 
-  handleInput(input: string[]) {
-    for (let i = 0; i < input.length; i++) {
-      const char = input[i]
-      this.inputMap[char] && this.inputMap[char]()
-    }
+  handleInput(ipt: string[]) {
+    this.states = this.states.map(state => state.handleInput(this, ipt))
+  }
+
+  update() {
+    this.states.forEach(state => state.update(this))
   }
 }
 
