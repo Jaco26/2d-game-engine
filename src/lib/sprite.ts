@@ -1,11 +1,10 @@
-import { SpriteState } from './types'
+import { FiniteStateMachine } from './state'
 
 export class Sprite {
   x: number
   y: number
-  states: SpriteState[] = []
+  inputHandlers: FiniteStateMachine[] = []
 
-  inputMap = {}
   dx = 0
   dy = 0
   fx = 0
@@ -16,16 +15,16 @@ export class Sprite {
     this.y = y
   }
 
-  registerState(state: SpriteState) {
-    this.states.push(state)
+  registerInputHandler(state: FiniteStateMachine) {
+    this.inputHandlers.push(state)
   }
 
-  handleInput(ipt: string[]) {
-    this.states = this.states.map(state => state.handleInput(this, ipt))
+  handleInput(input: string[]) {
+    this.inputHandlers.forEach(state => state.handleInput(input))
   }
 
   update() {
-    this.states.forEach(state => state.update(this))
+    this.inputHandlers.forEach(state => state.update(this))
   }
 }
 

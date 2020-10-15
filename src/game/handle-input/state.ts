@@ -1,5 +1,4 @@
-import { SpriteState } from '../../lib/types'
-import { Sprite } from '../../lib/sprite'
+import { FiniteStateMachine } from '../../lib/state'
 
 import * as pdct from './predicates'
 import * as btn from './buttons'
@@ -10,70 +9,66 @@ const isDownPressed = pdct.shouldGoDown(btn.ARROW_UP, btn.ARROW_DOWN)
 const isUpPressed = pdct.shouldGoUp(btn.ARROW_UP, btn.ARROW_DOWN)
 
 
-export class MovingUp implements SpriteState {
-  handleInput(s: Sprite, ipt: string[]) {
-    if (isUpPressed(ipt)) return this
-    if (isDownPressed(ipt)) return new MovingDown()
-    return new YStationary()
-  }
-  update(s: Sprite) {
-    s.y -= 2
-  }
-}
+export const yAxisState = new FiniteStateMachine('STATIONARY', {
+  STATIONARY: {
+    handleInput(setState, input) {
+      if (isDownPressed(input)) setState('MOVING_DOWN')
+      else if (isUpPressed(input)) setState('MOVING_UP')
+    },
+    update(sprite) {
 
-export class MovingDown implements SpriteState {
-  handleInput(s: Sprite, ipt: string[]) {
-    if (isDownPressed(ipt)) return this
-    if (isUpPressed(ipt)) return new MovingUp()
-    return new YStationary()
+    }
+  },
+  MOVING_UP: {
+    handleInput(setState, input) {
+      if (isUpPressed(input)) return
+      if (isDownPressed(input)) setState('MOVING_DOWN')
+      else setState('STATIONARY')
+    },
+    update(sprite) {
+      sprite.y -= 2
+    }
+  },
+  MOVING_DOWN: {
+    handleInput(setState, input) {
+      if (isDownPressed(input)) return
+      if (isUpPressed(input)) setState('MOVING_UP')
+      else setState('STATIONARY')
+    },
+    update(sprite) {
+      sprite.y += 2
+    }
   }
-  update(s: Sprite) {
-    s.y += 2
-  }
-}
+})
 
-export class YStationary implements SpriteState {
-  handleInput(s: Sprite, ipt: string[]) {
-    if (isUpPressed(ipt)) return new MovingUp()
-    if (isDownPressed(ipt)) return new MovingDown()
-    return this
-  }
-  update(s: Sprite) {
+export const xAxisState = new FiniteStateMachine('STATIONARY', {
+  STATIONARY: {
+    handleInput(setState, input) {
+      if (isRightPressed(input)) setState('MOVING_RIGHT')
+      else if (isLeftPressed(input)) setState('MOVING_LEFT')
+    },
+    update(sprite) {
 
+    }
+  },
+  MOVING_LEFT: {
+    handleInput(setState, input) {
+      if (isLeftPressed(input)) return
+      if (isRightPressed(input)) setState('MOVING_RIGHT')
+      else setState('STATIONARY')
+    },
+    update(sprite) {
+      sprite.x -= 2
+    }
+  },
+  MOVING_RIGHT: {
+    handleInput(setState, input) {
+      if (isRightPressed(input)) return
+      if (isLeftPressed(input)) setState('MOVING_LEFT')
+      else setState('STATIONARY')
+    },
+    update(sprite) {
+      sprite.x += 2
+    }
   }
-}
-
-
-
-export class MovingLeft implements SpriteState {
-  handleInput(s: Sprite, ipt: string[]) {
-    if (isLeftPressed(ipt)) return this
-    if (isRightPressed(ipt)) return new MovingRight()
-    return new XStationary()
-  }
-  update(s: Sprite) {
-    s.x -= 2
-  }
-}
-
-export class MovingRight implements SpriteState {
-  handleInput(s: Sprite, ipt: string[]) {
-    if (isRightPressed(ipt)) return this
-    if (isLeftPressed(ipt)) return new MovingLeft()
-    return new XStationary()
-  }
-  update(s: Sprite) {
-    s.x += 2
-  }
-}
-
-export class XStationary implements SpriteState {
-  handleInput(s: Sprite, ipt: string[]) {
-    if (isRightPressed(ipt)) return new MovingRight()
-    if (isLeftPressed(ipt)) return new MovingLeft()
-    return this
-  }
-  update(s: Sprite) {
-
-  }
-}
+})

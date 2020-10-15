@@ -41,8 +41,8 @@ export interface GameConfig {
 }
 
 export interface SpriteState {
-  handleInput: (s: Sprite, ipt: string[]) => SpriteState,
-  update: (s: Sprite) => void
+  handleInput: (setState: (newState: string) => void, input: string[]) => void,
+  update: (sprite: Sprite) => void
 }
 
 export type GameEventHandler = (ctx: GameCtx, payolad: any) => void 

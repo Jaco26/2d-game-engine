@@ -27,29 +27,3 @@ export class KeyboardInput {
   }
 }
 
-
-
-interface Rule {
-  predicate: Predicate,
-  command: Command
-}
-
-
-export class InputParser {
-  private rules: Rule[] = []
-
-  addRule(predicate: Predicate, command: Command) {
-    this.rules.push({ predicate, command })
-  }
-
-  parseInput(input: string[]): Command[] {
-    return this.rules.reduce((acc, { predicate, command }) => {
-      if (predicate(input)) {
-        acc.push(command)
-      }
-      return acc
-    }, [])
-  }
-}
-
-
