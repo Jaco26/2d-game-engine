@@ -11,64 +11,101 @@ const isUpPressed = pdct.shouldGoUp(btn.ARROW_UP, btn.ARROW_DOWN)
 
 export const yAxisState = new FiniteStateMachine('STATIONARY', {
   STATIONARY: {
-    handleInput(setState, input) {
-      if (isDownPressed(input)) setState('MOVING_DOWN')
-      else if (isUpPressed(input)) setState('MOVING_UP')
+    handleInput(source, spriteId, input, setState) {
+      if (source === 'keyboard') {
+        if (isDownPressed(input)) setState('MOVING_DOWN')
+        else if (isUpPressed(input)) setState('MOVING_UP')
+      }
     },
     update(sprite) {
 
     }
   },
   MOVING_UP: {
-    handleInput(setState, input) {
-      if (isUpPressed(input)) return
-      if (isDownPressed(input)) setState('MOVING_DOWN')
-      else setState('STATIONARY')
+    handleInput(source, spriteId, input, setState) {
+      if (source === 'keyboard') {
+        if (isUpPressed(input)) return
+        if (isDownPressed(input)) setState('MOVING_DOWN')
+        else setState('STATIONARY')
+      }
     },
     update(sprite) {
-      sprite.y -= 2
+      sprite.dimensions.y -= 2
     }
   },
   MOVING_DOWN: {
-    handleInput(setState, input) {
-      if (isDownPressed(input)) return
-      if (isUpPressed(input)) setState('MOVING_UP')
-      else setState('STATIONARY')
+    handleInput(source, spriteId, input, setState) {
+      if (source === 'keyboard') {
+        if (isDownPressed(input)) return
+        if (isUpPressed(input)) setState('MOVING_UP')
+        else setState('STATIONARY')
+      }
     },
     update(sprite) {
-      sprite.y += 2
+      sprite.dimensions.y += 2
     }
   }
 })
 
 export const xAxisState = new FiniteStateMachine('STATIONARY', {
   STATIONARY: {
-    handleInput(setState, input) {
-      if (isRightPressed(input)) setState('MOVING_RIGHT')
-      else if (isLeftPressed(input)) setState('MOVING_LEFT')
+    handleInput(source, spriteId, input, setState) {
+      if (source === 'keyboard') {
+        if (isRightPressed(input)) setState('MOVING_RIGHT')
+        else if (isLeftPressed(input)) setState('MOVING_LEFT')
+      }
     },
     update(sprite) {
 
     }
   },
   MOVING_LEFT: {
-    handleInput(setState, input) {
-      if (isLeftPressed(input)) return
-      if (isRightPressed(input)) setState('MOVING_RIGHT')
-      else setState('STATIONARY')
+    handleInput(source, spriteId, input, setState) {
+      if (source === 'keyboard') {
+        if (isLeftPressed(input)) return
+        if (isRightPressed(input)) setState('MOVING_RIGHT')
+        else setState('STATIONARY')
+      }
     },
     update(sprite) {
-      sprite.x -= 2
+      sprite.dimensions.x -= 2
     }
   },
   MOVING_RIGHT: {
-    handleInput(setState, input) {
-      if (isRightPressed(input)) return
-      if (isLeftPressed(input)) setState('MOVING_LEFT')
-      else setState('STATIONARY')
+    handleInput(source, spriteId, input, setState) {
+      if (source === 'keyboard') {
+        if (isRightPressed(input)) return
+        if (isLeftPressed(input)) setState('MOVING_LEFT')
+        else setState('STATIONARY')
+      }
     },
     update(sprite) {
-      sprite.x += 2
+      sprite.dimensions.x += 2
     }
   }
 })
+
+export const makeCollisionState = () => (
+  new FiniteStateMachine('NOT', {
+    NOT: {
+      handleInput(source, spriteId, input, setState) {
+        if (source === 'messages' && pdct.spriteDidCollide(spriteId)(input)) {
+          setState('COLLIDED')
+        }
+      },
+      update(sprite) {
+        sprite.fillStyle = 'green'
+      }
+    },
+    COLLIDED: {
+      handleInput(source, spriteId, input, setState) {
+        if (source === 'messages' && !pdct.spriteDidCollide(spriteId)(input)) {
+          setState('NOT')
+        }
+      },
+      update(sprite) {
+        sprite.fillStyle = 'red'
+      }
+    }
+  })
+)

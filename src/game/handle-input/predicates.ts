@@ -15,3 +15,7 @@ export const shouldGoLeft = (leftKey: string, rightKey: string): Predicate => ip
 export const shoudGoRight = (leftKey: string, rightKey: string): Predicate => ipt => (
   ipt.indexOf(rightKey) > ipt.indexOf(leftKey) 
 )
+
+export const spriteDidCollide = (spriteId: string): Predicate => ipt => (
+  ipt.some(x => x.includes(spriteId) && x.includes('SPRITE_COLLISION') || x.includes('SPRITE_STATIC_OBJECT_COLLISION'))
+)

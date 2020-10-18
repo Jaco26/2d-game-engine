@@ -1,23 +1,22 @@
-import { DynamicObject, Rect, Circle } from './interfaces'
+import { Rect } from './interfaces'
 import { FiniteStateMachine } from '../state'
+import { StaticObject } from './static-object'
 
-export class Sprite implements DynamicObject {
-  dimensions: Rect | Circle
-  
+export class Sprite extends StaticObject {
   states: FiniteStateMachine[] = []
   dx = 0
   dy = 0
 
-  constructor(dimensions: Rect | Circle) {
-    this.dimensions = dimensions
+  constructor(dimensions: Rect) {
+    super(dimensions)
   }
 
   registerState(state: FiniteStateMachine) {
     this.states.push(state)
   }
 
-  handleInput(input: string[]) {
-    this.states.forEach(state => state.handleInput(input))
+  handleInput(source: string, input: string[]) {
+    this.states.forEach(state => state.handleInput(source, this.id, input))
   }
 
   update() {
@@ -25,15 +24,3 @@ export class Sprite implements DynamicObject {
   }
 }
 
-export class RectSprite extends Sprite {
-  constructor(dimensions: Rect) {
-    super(dimensions)
-  }
-}
-
-
-export class CircleSprite extends Sprite {
-  constructor(dimensions: Circle) {
-    super(dimensions)
-  } 
-}

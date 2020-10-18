@@ -1,3 +1,7 @@
 import game from './game/game'
 
-game.play()
+(async () => {
+  await game.init()
+  game.play()
+})()
+

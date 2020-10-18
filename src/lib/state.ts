@@ -14,8 +14,13 @@ export class FiniteStateMachine {
     this.state = newState
   }
 
-  handleInput(input: string[]) {
-    this.stateHandlers[this.state].handleInput((newState: string) => this.setState(newState), input)
+  handleInput(source: string, spriteId: string, input: string[]) {
+    this.stateHandlers[this.state].handleInput(
+      source,
+      spriteId,
+      input,
+      (newState: string) => this.setState(newState),
+    )
   }
 
   update(sprite: Sprite) {

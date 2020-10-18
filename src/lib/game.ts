@@ -11,6 +11,8 @@ import { AnimationManager } from './animation'
 import { Loader } from './loader'
 import { Brush } from './brush'
 import { KeyboardInput } from './input'
+import { MessageQueue } from './message-queue'
+import { Physics } from './physics/physics'
 
 export class Game {
 
@@ -31,38 +33,32 @@ export class Game {
   private events = new EventManager()
   private loader = new Loader()
   private keyboard = new KeyboardInput()
+  private physics = new Physics()
+  private messages = new MessageQueue()
 
 
-
-  constructor({ canvasId, width, height, scene, viewport }: GameConfig) {
+  constructor({ canvasId, universe, viewport, scene }: GameConfig) {
     this.canvas = document.getElementById(canvasId)
     this.canvasCtx = this.canvas.getContext('2d')
 
-    this.width = width
-    this.height = height
+    this.width = universe.width
+    this.height = universe.height
 
     this.canvas.width = viewport.width
     this.canvas.height = viewport.height
-  
+
     this.scene = scene
     this.viewport = viewport
+    this.brush = new Brush(this.canvasCtx)
     this.animation = new AnimationManager(() => {
       this.scene.update(this.ctx)
       this.events.flushQueue(this.ctx)
+      this.messages.clear()
       return this.state.gameOn
     })
-    this.brush = new Brush(this.canvasCtx)
-
-    this.init()
   }
 
-  private _update() {
-    this.scene.update(this.ctx)
-    this.events.flushQueue(this.ctx)
-    return this.state.gameOn
-  }
-
-  private async init() {
+  async init() {
     await this.scene.preload(this.ctx)
     this.scene.create(this.ctx)
     this.keyboard.listen()
@@ -75,10 +71,11 @@ export class Game {
       animation: this.animation,
       brush: this.brush,
       camera: 1,
-      physics: 1,
+      physics: this.physics,
       loader: this.loader,
       viewport: this.viewport,
       pressedKeys: this.keyboard.pressedKeys,
+      messages: this.messages
     }
   }
 
@@ -86,16 +83,9 @@ export class Game {
     this.animation.frame()
   }
 
-  play(attempts = 0) {
-    // probably much more elegant way to handle waiting for assets to load...
-    if (attempts > 1000) throw new Error('Too many startup attempts')
+  play() {
     this.state.gameOn = true
-    if (!this.state.ready) {
-      attempts += 1
-      setTimeout(() => { this.play(attempts) })
-    } else {
-      this.animation.play()
-    }
+    this.animation.play()
   }
 
   pause() {

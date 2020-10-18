@@ -22,11 +22,11 @@ export class EventManager {
 
   flushQueue(ctx: GameCtx) {
     while (this.queue.length) {
-      const { type, payload } = this.queue.pop()
-      if (typeof this.listeners[type] === 'function') {
-        this.listeners[type](ctx, payload)
+      const { event, payload } = this.queue.pop()
+      if (typeof this.listeners[event] === 'function') {
+        this.listeners[event](ctx, payload)
       } else {
-        console.warn(`No listener registed for event: ${type}`)
+        console.warn(`No listener registed for event: ${event}`)
       }
     }
   }
