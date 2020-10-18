@@ -2,7 +2,7 @@ import { Loader } from "./loader";
 import { AnimationManager } from './animation';
 import { EventManager } from './events';
 import { Brush } from './brush';
-import { Sprite } from './sprite'
+import { Sprite } from './physics/sprite'
 
 
 export type Command = (sprite: Sprite) => void
@@ -41,6 +41,7 @@ export interface GameConfig {
 }
 
 export interface SpriteState {
+  data?: any,
   handleInput: (setState: (newState: string) => void, input: string[]) => void,
   update: (sprite: Sprite) => void
 }

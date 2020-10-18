@@ -1,4 +1,4 @@
-import { Sprite } from './sprite'
+import { Sprite } from './physics/sprite'
 import { SpriteState } from './types'
 
 export class FiniteStateMachine {
